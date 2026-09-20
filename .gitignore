@@ -1,0 +1,18 @@
+# Dependency directories (Never upload these)
+node_modules/
+jspm_packages/
+web_modules/
+
+# Next.js build compilation outputs
+.next/
+out/
+
+# Local database and secret keys configurations
+.env
+.env.local
+.env.production
+.env.development
+
+# OS system layout leftovers
+.DS_Store
+Thumbs.db

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # Isolated Database Service
+  videohub-db:
+    image: postgres:15-alpine
+    container_name: videohub_postgres_ledger
+    environment:
+      POSTGRES_USER: dev_engineer
+      POSTGRES_PASSWORD: secure_dev_password123
+      POSTGRES_DB: videohub_catalog
+    ports:
+      - "5433:5432" # External Port Shift: Host talks to 5433 to avoid 5432 conflicts
+    volumes:
+      - videohub_data_vault:/var/lib/postgresql/data # Persistent Data Volume
+    networks:
+      - videohub_isolated_network
+
+networks:
+  videohub_isolated_network:
+    driver: bridge
+
+volumes:
+  videohub_data_vault:
+    driver: local
