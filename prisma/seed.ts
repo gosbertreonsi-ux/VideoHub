@@ -13,34 +13,30 @@ async function main() {
 
   console.log('🎬 Injecting mock movie catalog...');
 
-  // Mock Asset 1: Your own self-hosted asset (Download Button Allowed)
   await prisma.title.create({
     data: {
-      name: 'Cosmos Voyage 4K',
+      name: 'Cosmos Voyage 4K Master Asset',
       slug: 'cosmos-voyage-4k',
       synopsis: 'A deep space telemetry exploration cinematic track entirely owned and registered by our studio.',
       posterUrl: 'https://unsplash.com',
       sourceType: SourceType.OWN,
       license: LicenseType.SELF_OWNED,
       fileUrl: 'https://videohub.internal',
-      fileSizeBytes: 536870912, // 512MB
-      releaseYear: 2026,
-      genres: { connect: [{ id: sciFi.id }] }
+      fileSizeBytes: 536870912,
+      releaseYear: 2026
     }
   });
 
-  // Mock Asset 2: A YouTube Embed (No Download Button Allowed)
   await prisma.title.create({
     data: {
-      name: 'Cyberpunk Drone Flight',
+      name: 'Cyberpunk Drone Flight Cinematic Embed',
       slug: 'cyberpunk-drone-flight',
       synopsis: 'An atmospheric flight through neon-lit streets captured via community contribution streams.',
       posterUrl: 'https://unsplash.com',
       sourceType: SourceType.YOUTUBE,
       license: LicenseType.EMBED_ONLY,
       embedId: 'dQw4w9WgXcQ',
-      releaseYear: 2025,
-      genres: { connect: [{ id: action.id }, { id: sciFi.id }] }
+      releaseYear: 2025
     }
   });
 
