@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Explicit type contract defining what data this visual card needs to load
 interface VideoCardProps {
   name: string;
   slug: string;
@@ -18,52 +17,58 @@ export const VideoCard: React.FC<VideoCardProps> = ({
   license,
   releaseYear
 }) => {
-  // Safe engineering evaluation rule for the interface layer
   const isDownloadable = sourceType === 'OWN' && license === 'SELF_OWNED';
 
   return (
-    <div className="group relative w-full overflow-hidden rounded-xl bg-brandCard border border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:border-brandAccent/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+    <div className="group w-full bg-[#0d121c] border border-[#161b26] rounded overflow-hidden flex flex-col justify-between transition-all duration-200 hover:border-[#2a354d] hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
       
-      {/* Locked-Ratio Media Wrapper */}
-      <div className="relative aspect-[3/4] w-full bg-[#0a0e17] overflow-hidden">
-        <img 
-          src={posterUrl} 
-          alt={name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Absolute Source Tag badge */}
-        <div className="absolute top-3 left-3 rounded-md bg-black/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-300 backdrop-blur-sm border border-gray-700">
-          {sourceType}
+      <div className="relative">
+        {/* Zero-Margin Aspect-Locked Media Cover */}
+        <div className="relative aspect-[3/4.2] w-full bg-[#07090e] border-b border-[#161b26] overflow-hidden">
+          <img 
+            src={posterUrl} 
+            alt={name}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
+            loading="lazy"
+          />
+          {/* Saturated Content Format Label */}
+          <span className={`absolute top-2 left-2 px-1.5 py-0.5 text-[9px] font-black tracking-widest uppercase rounded shadow ${
+            sourceType === 'OWN' 
+              ? 'bg-[#0099ff] text-white' 
+              : 'bg-[#cc0000] text-white'
+          }`}>
+            {sourceType}
+          </span>
+        </div>
+
+        {/* High-Contrast Description Area */}
+        <div className="p-3 space-y-1">
+          <span className="text-[10px] font-bold text-gray-500">{releaseYear}</span>
+          <h3 className="text-xs font-bold text-gray-200 line-clamp-2 leading-snug group-hover:text-[#ffb700] transition-colors duration-150 min-h-[32px]">
+            {name}
+          </h3>
         </div>
       </div>
 
-      {/* Info Context Block */}
-      <div className="p-4">
-        <span className="text-xs text-gray-500">{releaseYear}</span>
-        <h3 className="truncate text-sm font-semibold text-gray-100 group-hover:text-brandAccent transition-colors mt-0.5">
-          {name}
-        </h3>
+      {/* Flat Bottom Action Block */}
+      <div className="p-3 pt-0 flex gap-1.5">
+        <a 
+          href={`/title/${slug}`}
+          className="flex-1 rounded-sm bg-[#1b2436] hover:bg-[#ffb700] text-white hover:text-[#07090e] border border-[#27344e] hover:border-[#ffb700] py-1.5 text-center text-[10px] font-black uppercase tracking-wider transition-all duration-150"
+        >
+          Details
+        </a>
 
-        {/* Dynamic Navigation/Download Fork */}
-        <div className="mt-3 flex gap-2">
-          <a 
-            href={`/title/${slug}`}
-            className="flex-1 rounded-md bg-brandAccent py-1.5 text-center text-xs font-medium text-white transition-colors hover:bg-cyan-500"
+        {isDownloadable && (
+          <button 
+            className="rounded-sm bg-[#111724] border border-[#1b253a] px-2.5 text-gray-400 hover:bg-[#1c253a] hover:text-white transition-all duration-150"
+            title="Download original file asset"
           >
-            Watch
-          </a>
-
-          {isDownloadable && (
-            <button 
-              className="rounded-md bg-gray-800 border border-gray-700 px-2.5 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-              title="Download direct video"
-            >
-              📥
-            </button>
-          )}
-        </div>
+            📥
+          </button>
+        )}
       </div>
+
     </div>
   );
 };

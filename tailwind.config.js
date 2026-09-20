@@ -7,9 +7,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brandBg: "#0a0e17",       // Deep obsidian background
-        brandCard: "#121824",     // Dark slate gray card base
-        brandAccent: "#06b6d4",   // Electric cyan highlights
+        brandBg: "#050811",       // Saturated dark canvas
+        brandCard: "#0d1321",     // Deep gaming slate
+        brandAccent: "#06b6d4",   // High-impact electric cyan
       },
     },
   },

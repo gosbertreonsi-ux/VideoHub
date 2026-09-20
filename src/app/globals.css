@@ -2,8 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Surface Layers */
+  --bg: #050816;
+  --bg-elevated: #0b1426;
+  --panel: #0c1a2e;
+  --panel-hover: #12233c;
+  --border: rgba(255, 255, 255, 0.08);
+
+  /* Typography Text Matrix */
+  --text: #ffffff;
+  --text-muted: #9aa4b8;
+  --text-dim: #6b7590;
+
+  /* Semantic System Color Assets */
+  --accent: #29a9e1;       /* Primary Interactive Blue */
+  --success: #22c55e;      /* Green Status / Versions */
+  --momentum: #f59e0b;     /* Orange Momentum Delays */
+  --gold: #fbbf24;         /* Gold Champion Rank #1 */
+  --purple: #7c5cff;       /* Purple Rank Change Progress */
+}
+
 body {
-  background-color: #0a0e17;
-  color: #f3f4f6;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle at 50% 0%, rgba(41, 169, 225, 0.07) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Custom High-Contrast Typography Utilities */
+.font-editorial {
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
