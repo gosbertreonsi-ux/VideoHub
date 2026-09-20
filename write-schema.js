@@ -27,12 +27,20 @@ model Title {
   createdAt     DateTime    @default(now())
 
   genres        Genre[]
+  collections   Collection[] // 📂 Added the structural collections relationship loop
 }
 
 model Genre {
   id     String  @id @default(cuid())
   name   String  @unique
   slug   String  @unique
+  titles Title[]
+}
+
+model Collection { // 📂 Added the collection database table model
+  id     String  @id @default(cuid())
+  slug   String  @unique
+  name   String
   titles Title[]
 }
 
@@ -48,11 +56,10 @@ enum LicenseType {
   EMBED_ONLY
 }`;
 
-// Ensure directory exists and write file in explicit UTF-8 format
 const prismaDir = path.join(__dirname, 'prisma');
 if (!fs.existsSync(prismaDir)){
     fs.mkdirSync(prismaDir);
 }
 
 fs.writeFileSync(path.join(prismaDir, 'schema.prisma'), schemaContent, 'utf8');
-console.log('✅ Clean UTF-8 schema.prisma written successfully!');
+console.log('✅ Clean UTF-8 schema.prisma with Collections written successfully!');
