@@ -7,36 +7,32 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 🎬 The core database entry rule for any media item
 model Title {
   id            String      @id @default(cuid())
-  slug          String      @unique // Used in the URL (e.g., /title/my-video)
+  slug          String      @unique
   name          String
   synopsis      String      @db.Text
-  posterUrl     String      // Image url for grid card display
-  bannerUrl     String?     // Optional wide header image
-  sourceType    SourceType  // Enforces a strict classification (OWN, YOUTUBE, or VIMEO)
-  license       LicenseType // Enforces a strict rule (SELF_OWNED, CC_BY, or EMBED_ONLY)
-  embedId       String?     // Video ID string (only used for YouTube/Vimeo)
-  fileUrl       String?     // Secure download link (only used for your OWN files)
-  fileSizeBytes BigInt?     // Video file size in bytes
+  posterUrl     String
+  bannerUrl     String?
+  sourceType    SourceType
+  license       LicenseType
+  embedId       String?
+  fileUrl       String?
+  fileSizeBytes BigInt?
   releaseYear   Int
   views         Int         @default(0)
   createdAt     DateTime    @default(now())
 
-  // Relationships (Links this table to other tables)
   genres        Genre[]
 }
 
-// 🏷️ Genre classifications for clean menu navigation
 model Genre {
   id     String  @id @default(cuid())
-  name   String  @unique // E.g., "Action"
-  slug   String  @unique // E.g., "action"
-  titles Title[] // Connects back to titles
+  name   String  @unique
+  slug   String  @unique
+  titles Title[]
 }
 
-// 🚨 Enum constraints lock down choices to prevent spelling mistakes or invalid states
 enum SourceType {
   OWN
   YOUTUBE
