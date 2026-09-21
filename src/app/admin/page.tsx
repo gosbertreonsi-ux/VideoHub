@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 interface AdminPageProps {
-  searchParams: { error?: string; success?: string };
+  searchParams: { error?: string; success?: string; failed_slug?: string };
 }
 
 export default async function AdminDashboardPage({ searchParams }: AdminPageProps) {
@@ -28,7 +28,17 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
     const sourceType = formData.get('sourceType') as any;
     const license = formData.get('license') as any;
     const fileUrl = formData.get('fileUrl') as string || null;
-    const embedId = formData.get('embedId') as string || null;
+    
+    // 🛠️ AUTOMATED YOUTUBE REGEX EXTAL CLEANER EXTRACTION LOOP
+    const embedIdInput = formData.get('embedId') as string || null;
+    let embedId = null;
+
+    if (embedIdInput) {
+      // High-performance matching sequence catches watch urls, shorts, embeds, and list string tokens
+      const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+      const match = embedIdInput.match(youtubeRegex);
+      embedId = match ? match[1] : embedIdInput.trim(); // Pulls out only the 11 character token safely!
+    }
 
     if (!name || !slug) {
       redirect('/admin?error=missing_required_fields');
@@ -74,9 +84,15 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
         </div>
       )}
 
+      {searchParams.error === 'missing_required_fields' && (
+        <div className="p-4 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400 text-xs font-semibold">
+          ⚠️ **Ingestion Rejected:** Required parameters (Name / Slug) were omitted from the form fields.
+        </div>
+      )}
+
       {searchParams.success === 'item_published_live' && (
         <div className="p-4 bg-emerald-950/40 border border-emerald-900/50 rounded-xl text-emerald-400 text-xs font-semibold">
-          🚀 **Success:** Media object validated, synchronized, and published down into your cloud data layers live!
+          🚀 **Success:** Media object validated, cleaned, and published down into your cloud data layers live!
         </div>
       )}
 
@@ -115,24 +131,24 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Source Configuration</label>
             <select name="sourceType" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
-              <option value="OWN">OWN (Self-Hosted)</option>
               <option value="YOUTUBE">YOUTUBE Embed</option>
+              <option value="OWN">OWN (Self-Hosted)</option>
               <option value="VIMEO">VIMEO Embed</option>
             </select>
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Licensing Model</label>
             <select name="license" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
-              <option value="SELF_OWNED">SELF_OWNED</option>
               <option value="EMBED_ONLY">EMBED_ONLY</option>
+              <option value="SELF_OWNED">SELF_OWNED</option>
               <option value="CC_BY">CC_BY Attribution</option>
             </select>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">YouTube Video ID String (If YouTube)</label>
-            <input type="text" name="embedId" placeholder="e.g., dQw4w9WgXcQ" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
+            <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">YouTube Video ID or Full Link URL</label>
+            <input type="text" name="embedId" placeholder="Pasted link clears automatically..." className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Download Link Target URL (If OWN)</label>
