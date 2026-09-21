@@ -31,8 +31,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
             loading="lazy"
           />
-          {/* Saturated Content Format Label */}
-          <span className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-black tracking-widest uppercase rounded shadow-lg transition-transform duration-300 group-hover:scale-105 ${
+          <span className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-black tracking-widest uppercase rounded shadow-lg ${
             sourceType === 'OWN' ? 'bg-[#0099ff] text-white' : 'bg-[#cc0000] text-white'
           }`}>
             {sourceType}
@@ -41,7 +40,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
 
         {/* High-Contrast Description Area */}
         <div className="p-3 space-y-1">
-          <span className="text-[10px] font-bold text-gray-500 tracking-wider block transition-colors group-hover:text-gray-400">{releaseYear}</span>
+          <span className="text-[10px] font-bold text-gray-500 tracking-wider block">{releaseYear}</span>
           <h3 className="text-xs font-bold text-gray-200 line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors duration-200 min-h-[32px]">
             {name}
           </h3>
@@ -50,8 +49,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({
 
       {/* Flat Bottom Action Block */}
       <div className="p-3 pt-0 flex gap-2">
+        {/* 🛠️ ALIGNED GATEWAY: Fixed link pointing cleanly to /title/ routing coordinates */}
         <a 
-          href={`/game/${slug}`}
+          href={`/title/${slug}`}
           className="flex-1 rounded-lg bg-[#1b2436] hover:bg-[var(--accent)] text-white hover:text-white border border-[#27344e] hover:border-[var(--accent)] py-2 text-center text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md"
         >
           Details
@@ -60,7 +60,6 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         {isDownloadable && (
           <button 
             className="rounded-lg bg-[#111724] border border-white/5 px-3 text-gray-400 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 transition-all duration-300"
-            title="Download original file asset"
           >
             📥
           </button>
@@ -69,4 +68,4 @@ export const VideoCard: React.FC<VideoCardProps> = ({
 
     </div>
   );
-};
+}

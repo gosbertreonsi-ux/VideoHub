@@ -3,50 +3,83 @@ import { db } from '../../lib/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-export default async function AdminDashboardPage() {
+interface AdminPageProps {
+  searchParams: { error?: string; success?: string };
+}
+
+export default async function AdminDashboardPage({ searchParams }: AdminPageProps) {
   
-  // 🛡️ SECURITY CONFIGURATION OVERWRITE FOR THE CONSOLE
-  const simulatedUserRole = "ADMIN"; // Upgraded to grant your personal local environment full clearance!
+  // 🛡️ Admin Terminal Identity Verification
+  const simulatedUserRole = "ADMIN"; 
 
   if (simulatedUserRole !== "ADMIN") {
-    // Instantly blocks unauthorized paths and boots users back home!
     redirect('/?error=unauthorized_admin_access');
   }
 
-  // Server Action function pipeline to ingest data fields down into Neon
+  // Server Action function pipeline to ingest data fields down into Neon safely
   async function handleAddTitle(formData: FormData) {
     'use server';
 
     const name = formData.get('name') as string;
-    const slug = formData.get('slug') as string;
+    const slug = formData.get('slug') as string ? formData.get('slug')?.toString().toLowerCase().trim() : '';
     const synopsis = formData.get('synopsis') as string;
     const posterUrl = formData.get('posterUrl') as string;
     const releaseYear = parseInt(formData.get('releaseYear') as string);
     const sourceType = formData.get('sourceType') as any;
     const license = formData.get('license') as any;
     const fileUrl = formData.get('fileUrl') as string || null;
-    const embedId = formData.get('embedId') as string || null; // Captured video id parameters
+    const embedId = formData.get('embedId') as string || null;
 
-    await db.title.create({
-      data: {
-        name,
-        slug: slug.toLowerCase().trim(),
-        synopsis,
-        posterUrl,
-        releaseYear,
-        sourceType,
-        license,
-        fileUrl,
-        embedId,
-      },
-    });
+    if (!name || !slug) {
+      redirect('/admin?error=missing_required_fields');
+    }
 
+    try {
+      // 🏎️ Direct Ingestion Attempt
+      await db.title.create({
+        data: {
+          name,
+          slug,
+          synopsis,
+          posterUrl,
+          releaseYear,
+          sourceType,
+          license,
+          fileUrl,
+          embedId,
+        },
+      });
+    } catch (error: any) {
+      // 🛡️ DEFENSIVE GUARD: Catch Prisma Unique Barcode Slug Collisions Instantly
+      if (error.code === 'P2002') {
+        redirect(`/admin?error=slug_already_exists&failed_slug=${slug}`);
+      }
+      // General error catch-all
+      redirect('/admin?error=database_transaction_failed');
+    }
+
+    // Clear stale caching snapshots to force immediate refresh layouts
     revalidatePath('/');
     revalidatePath('/games');
+    redirect('/admin?success=item_published_live');
   }
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 animate-page-entry">
+      
+      {/* 🧭 SYSTEM NOTIFICATION ALERTS DISPLAY PANEL */}
+      {searchParams.error === 'slug_already_exists' && (
+        <div className="p-4 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400 text-xs font-semibold">
+          ⚠️ **Ingestion Rejected:** A video asset with the web route address URL <span className="underline font-mono">"{searchParams.failed_slug}"</span> already exists inside your Neon database. Please choose a unique name slug!
+        </div>
+      )}
+
+      {searchParams.success === 'item_published_live' && (
+        <div className="p-4 bg-emerald-950/40 border border-emerald-900/50 rounded-xl text-emerald-400 text-xs font-semibold">
+          🚀 **Success:** Media object validated, synchronized, and published down into your cloud data layers live!
+        </div>
+      )}
+
       <div className="border-b border-white/[0.04] pb-4">
         <h1 className="text-2xl font-black text-emerald-400 uppercase tracking-tight flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -62,8 +95,8 @@ export default async function AdminDashboardPage() {
             <input type="text" name="name" required placeholder="e.g., Cyberpunk Drone Flight" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">URL Route Slug</label>
-            <input type="text" name="slug" required placeholder="e.g., cyberpunk-drone-flight" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
+            <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">URL Route Slug (Must be unique)</label>
+            <input type="text" name="slug" required placeholder="e.g., unique-custom-slug" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
           </div>
         </div>
         <div className="space-y-1">
