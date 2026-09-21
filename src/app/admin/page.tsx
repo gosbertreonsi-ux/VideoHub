@@ -9,14 +9,14 @@ interface AdminPageProps {
 
 export default async function AdminDashboardPage({ searchParams }: AdminPageProps) {
   
-  // 🛡️ Admin Terminal Identity Verification
+  // 🛡️ Identity Verification Gate
   const simulatedUserRole = "ADMIN"; 
 
   if (simulatedUserRole !== "ADMIN") {
     redirect('/?error=unauthorized_admin_access');
   }
 
-  // Server Action function pipeline to ingest data fields down into Neon safely
+  // Secure Server Action pipeline to safely ingest data parameters into Neon Cloud
   async function handleAddTitle(formData: FormData) {
     'use server';
 
@@ -29,23 +29,24 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
     const license = formData.get('license') as any;
     const fileUrl = formData.get('fileUrl') as string || null;
     
-    // 🛠️ AUTOMATED YOUTUBE REGEX EXTAL CLEANER EXTRACTION LOOP
+    // 🛠️ AUTOMATED YOUTUBE REGEX CLEANER EXTRACTION LOOP
     const embedIdInput = formData.get('embedId') as string || null;
     let embedId = null;
 
     if (embedIdInput) {
-      // High-performance matching sequence catches watch urls, shorts, embeds, and list string tokens
       const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
       const match = embedIdInput.match(youtubeRegex);
-      embedId = match ? match[1] : embedIdInput.trim(); // Pulls out only the 11 character token safely!
+      embedId = match ? match[1] : embedIdInput.trim(); // Safely isolates the clean 11 character token string
     }
 
     if (!name || !slug) {
       redirect('/admin?error=missing_required_fields');
     }
 
+    let isDuplicate = false;
+
     try {
-      // 🏎️ Direct Ingestion Attempt
+      // 🏎️ Direct Database Ledger Ingestion Task
       await db.title.create({
         data: {
           name,
@@ -60,15 +61,19 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
         },
       });
     } catch (error: any) {
-      // 🛡️ DEFENSIVE GUARD: Catch Prisma Unique Barcode Slug Collisions Instantly
+      console.error("Database tracking caught an error:", error.message);
+      // If code is P2002, it means a unique constraint URL slug collision happened in Postgres
       if (error.code === 'P2002') {
-        redirect(`/admin?error=slug_already_exists&failed_slug=${slug}`);
+        isDuplicate = true;
       }
-      // General error catch-all
-      redirect('/admin?error=database_transaction_failed');
     }
 
-    // Clear stale caching snapshots to force immediate refresh layouts
+    // 🛡️ CRITICAL FIX: Execute redirects outside the try/catch context block to respect Next.js routing engines
+    if (isDuplicate) {
+      redirect(`/admin?error=slug_already_exists&failed_slug=${slug}`);
+    }
+
+    // Clear stale caching snapshots to force immediate refresh layouts globally
     revalidatePath('/');
     revalidatePath('/games');
     redirect('/admin?success=item_published_live');
@@ -77,21 +82,15 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
   return (
     <div className="max-w-3xl mx-auto space-y-8 animate-page-entry">
       
-      {/* 🧭 SYSTEM NOTIFICATION ALERTS DISPLAY PANEL */}
+      {/* 🧭 NOTIFICATION CONTROL CENTRE ALERTS BANNER PANEL */}
       {searchParams.error === 'slug_already_exists' && (
-        <div className="p-4 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400 text-xs font-semibold">
+        <div className="p-4 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400 text-xs font-semibold shadow-lg">
           ⚠️ **Ingestion Rejected:** A video asset with the web route address URL <span className="underline font-mono">"{searchParams.failed_slug}"</span> already exists inside your Neon database. Please choose a unique name slug!
         </div>
       )}
 
-      {searchParams.error === 'missing_required_fields' && (
-        <div className="p-4 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400 text-xs font-semibold">
-          ⚠️ **Ingestion Rejected:** Required parameters (Name / Slug) were omitted from the form fields.
-        </div>
-      )}
-
       {searchParams.success === 'item_published_live' && (
-        <div className="p-4 bg-emerald-950/40 border border-emerald-900/50 rounded-xl text-emerald-400 text-xs font-semibold">
+        <div className="p-4 bg-emerald-950/40 border border-emerald-900/50 rounded-xl text-emerald-400 text-xs font-semibold shadow-lg">
           🚀 **Success:** Media object validated, cleaned, and published down into your cloud data layers live!
         </div>
       )}
@@ -108,11 +107,11 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Media Asset Name</label>
-            <input type="text" name="name" required placeholder="e.g., Cyberpunk Drone Flight" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
+            <input type="text" name="name" required placeholder="e.g., Cyberpunk Synthwave Chill" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">URL Route Slug (Must be unique)</label>
-            <input type="text" name="slug" required placeholder="e.g., unique-custom-slug" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
+            <input type="text" name="slug" required placeholder="e.g., cyberpunk-synthwave-track" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
           </div>
         </div>
         <div className="space-y-1">
@@ -121,7 +120,7 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
         </div>
         <div className="space-y-1">
           <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Image Cover Poster URL</label>
-          <input type="url" name="posterUrl" required placeholder="https://unsplash.com..." className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
+          <input type="url" name="posterUrl" required placeholder="https://unsplash.com" className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1">
@@ -148,7 +147,7 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">YouTube Video ID or Full Link URL</label>
-            <input type="text" name="embedId" placeholder="Pasted link clears automatically..." className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
+            <input type="text" name="embedId" placeholder="Pasted full links strip automatically..." className="w-full bg-[var(--bg)] border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--accent)]" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-wider text-gray-400">Download Link Target URL (If OWN)</label>
