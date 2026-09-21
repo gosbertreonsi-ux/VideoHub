@@ -16,11 +16,11 @@
   --text-dim: #6b7590;
 
   /* Semantic System Color Assets */
-  --accent: #29a9e1;       /* Primary Interactive Blue */
-  --success: #22c55e;      /* Green Status / Versions */
-  --momentum: #f59e0b;     /* Orange Momentum Delays */
-  --gold: #fbbf24;         /* Gold Champion Rank #1 */
-  --purple: #7c5cff;       /* Purple Rank Change Progress */
+  --accent: #29a9e1;       
+  --success: #22c55e;      
+  --momentum: #f59e0b;     
+  --gold: #fbbf24;         
+  --purple: #7c5cff;       
 }
 
 body {
@@ -28,13 +28,61 @@ body {
   color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
-  background-image: radial-gradient(circle at 50% 0%, rgba(41, 169, 225, 0.07) 0%, transparent 60%);
+  background-image: radial-gradient(circle at 50% 0%, rgba(41, 169, 225, 0.09) 0%, transparent 60%);
   background-attachment: fixed;
 }
 
-/* Custom High-Contrast Typography Utilities */
 .font-editorial {
   font-family: 'Impact', 'Arial Black', sans-serif;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+}
+
+/* 🌀 ULTRA-PREMIUM HARDWARE ACCELERATED MOTION CORE */
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroPulse {
+  0%, 100% { transform: scale(1); opacity: 0.12; }
+  50% { transform: scale(1.03); opacity: 0.18; }
+}
+
+@keyframes scrollMarqueeLeft {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes scrollMarqueeRight {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+/* Custom Animation Utility Classes */
+.animate-page-entry {
+  animation: pageFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-glow-pulse {
+  animation: heroPulse 4s ease-in-out infinite;
+}
+
+.animate-marquee-vertical-up {
+  animation: scrollMarqueeLeft 30s linear infinite;
+}
+
+.animate-marquee-vertical-down {
+  animation: scrollMarqueeRight 30s linear infinite;
+}
+
+/* Smooth Interactive Custom Transitions */
+.motion-card {
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform, border-color, box-shadow;
+}
+
+.motion-card:hover {
+  transform: translateY(-6px) scale(1.01);
 }

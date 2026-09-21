@@ -20,22 +20,20 @@ export const VideoCard: React.FC<VideoCardProps> = ({
   const isDownloadable = sourceType === 'OWN' && license === 'SELF_OWNED';
 
   return (
-    <div className="group w-full bg-[#0d121c] border border-[#161b26] rounded overflow-hidden flex flex-col justify-between transition-all duration-200 hover:border-[#2a354d] hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+    <div className="group w-full bg-[#0d121c] border border-white/[0.04] rounded-xl overflow-hidden flex flex-col justify-between motion-card hover:border-[var(--accent)]/50 hover:shadow-[0_12px_32px_rgba(41,169,225,0.2)]">
       
-      <div className="relative">
+      <div>
         {/* Zero-Margin Aspect-Locked Media Cover */}
-        <div className="relative aspect-[3/4.2] w-full bg-[#07090e] border-b border-[#161b26] overflow-hidden">
+        <div className="relative aspect-[3/4.2] w-full bg-[#07090e] border-b border-white/5 overflow-hidden">
           <img 
             src={posterUrl} 
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
             loading="lazy"
           />
           {/* Saturated Content Format Label */}
-          <span className={`absolute top-2 left-2 px-1.5 py-0.5 text-[9px] font-black tracking-widest uppercase rounded shadow ${
-            sourceType === 'OWN' 
-              ? 'bg-[#0099ff] text-white' 
-              : 'bg-[#cc0000] text-white'
+          <span className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-black tracking-widest uppercase rounded shadow-lg transition-transform duration-300 group-hover:scale-105 ${
+            sourceType === 'OWN' ? 'bg-[#0099ff] text-white' : 'bg-[#cc0000] text-white'
           }`}>
             {sourceType}
           </span>
@@ -43,25 +41,25 @@ export const VideoCard: React.FC<VideoCardProps> = ({
 
         {/* High-Contrast Description Area */}
         <div className="p-3 space-y-1">
-          <span className="text-[10px] font-bold text-gray-500">{releaseYear}</span>
-          <h3 className="text-xs font-bold text-gray-200 line-clamp-2 leading-snug group-hover:text-[#ffb700] transition-colors duration-150 min-h-[32px]">
+          <span className="text-[10px] font-bold text-gray-500 tracking-wider block transition-colors group-hover:text-gray-400">{releaseYear}</span>
+          <h3 className="text-xs font-bold text-gray-200 line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors duration-200 min-h-[32px]">
             {name}
           </h3>
         </div>
       </div>
 
       {/* Flat Bottom Action Block */}
-      <div className="p-3 pt-0 flex gap-1.5">
+      <div className="p-3 pt-0 flex gap-2">
         <a 
-          href={`/title/${slug}`}
-          className="flex-1 rounded-sm bg-[#1b2436] hover:bg-[#ffb700] text-white hover:text-[#07090e] border border-[#27344e] hover:border-[#ffb700] py-1.5 text-center text-[10px] font-black uppercase tracking-wider transition-all duration-150"
+          href={`/game/${slug}`}
+          className="flex-1 rounded-lg bg-[#1b2436] hover:bg-[var(--accent)] text-white hover:text-white border border-[#27344e] hover:border-[var(--accent)] py-2 text-center text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md"
         >
           Details
         </a>
 
         {isDownloadable && (
           <button 
-            className="rounded-sm bg-[#111724] border border-[#1b253a] px-2.5 text-gray-400 hover:bg-[#1c253a] hover:text-white transition-all duration-150"
+            className="rounded-lg bg-[#111724] border border-white/5 px-3 text-gray-400 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 transition-all duration-300"
             title="Download original file asset"
           >
             📥
